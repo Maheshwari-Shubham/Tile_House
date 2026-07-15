@@ -1,0 +1,33 @@
+.offers-page { padding-top: 70px; }
+.offers-hero { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 60px 0 50px; margin-bottom: 50px; }
+.offers-hero h1 { font-size: 2.4rem; margin-bottom: 8px; color: white; }
+.offers-hero p { opacity: 0.85; font-size: 16px; }
+.offers-grid { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto 50px; }
+.offer-big-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.obc-left {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+  padding: 32px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+}
+.obc-discount { font-size: 28px; font-weight: 800; color: white; text-align: center; font-family: 'Playfair Display', serif; }
+.obc-right { padding: 28px; }
+.obc-right h3 { font-size: 20px; color: var(--dark); margin-bottom: 8px; font-family: 'Playfair Display', serif; }
+.obc-right p { color: var(--text-light); font-size: 15px; line-height: 1.6; }
+.offer-expiry { margin-top: 12px; font-size: 13px; color: var(--primary); font-weight: 600; }
+
+.offers-cta { background: var(--bg2); border-radius: var(--radius-lg); padding: 40px; text-align: center; margin-bottom: 60px; }
+.offers-cta h3 { font-size: 20px; margin-bottom: 8px; color: var(--dark); }
+.offers-cta p { color: var(--text-light); margin-bottom: 20px; }
+.no-offers { text-align: center; padding: 60px 20px; }
+.no-offers h3 { margin: 16px 0 8px; font-size: 20px; }
+.no-offers p { color: var(--text-light); margin-bottom: 20px; }

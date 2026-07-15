@@ -1,0 +1,112 @@
+.auth-page {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  background: var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-card {
+  background: white;
+  border-radius: 20px;
+  padding: 44px 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.auth-logo-mark {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.auth-logo span {
+  display: inline-block;
+}
+.auth-card h2 {
+  font-size: 1.6rem;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+.auth-card > p {
+  color: var(--text-light);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.auth-error {
+  background: #FFEBEE;
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+.auth-group {
+  text-align: left;
+  margin-bottom: 16px;
+}
+.auth-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.auth-group label small {
+  font-weight: 400;
+  color: var(--text-light);
+}
+.auth-group input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.auth-group input:focus { border-color: var(--primary); }
+.auth-field-error {
+  display: block;
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+.auth-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+.auth-btn:hover { background: var(--primary-dark); }
+.auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.auth-alt {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+.auth-alt a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.auth-alt a:hover { text-decoration: underline; }

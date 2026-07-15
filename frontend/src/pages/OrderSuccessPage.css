@@ -1,0 +1,12 @@
+.success-page { padding: 100px 20px 60px; display: flex; justify-content: center; min-height: 80vh; align-items: center; }
+.success-card { background: white; border-radius: 20px; padding: 48px 40px; max-width: 520px; width: 100%; text-align: center; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+.success-icon { font-size: 70px; margin-bottom: 20px; animation: bounceIn 0.6s; }
+@keyframes bounceIn { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.success-card h1 { font-size: 1.8rem; color: var(--dark); margin-bottom: 12px; }
+.success-msg { color: var(--text-light); font-size: 15px; margin-bottom: 16px; }
+.order-id { background: var(--bg2); border-radius: 8px; padding: 10px 16px; font-size: 14px; margin-bottom: 24px; display: inline-block; }
+.success-details { background: var(--bg2); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: left; }
+.sd-row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.sd-row:last-child { border: none; }
+.success-note { background: #FFF8E1; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #795548; line-height: 1.6; margin-bottom: 28px; }
+.success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
