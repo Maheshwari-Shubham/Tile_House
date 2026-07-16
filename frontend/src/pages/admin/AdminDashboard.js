@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [settings, setSettings] = useState([]);
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const token = localStorage.getItem('adminToken');
   const user  = localStorage.getItem('adminUser');
@@ -28,6 +29,11 @@ export default function AdminDashboard() {
   const clearAdminStorage = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
+  };
+
+  const selectTab = (t) => {
+    setTab(t);
+    setMobileMenuOpen(false);
   };
 
   const loadData = useCallback(async () => {
@@ -63,7 +69,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-layout">
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="admin-brand">
           <img src="/favicon.svg" alt="Tile House logo" className="admin-brand-mark" />
           <div>
@@ -73,7 +79,7 @@ export default function AdminDashboard() {
         </div>
         <nav className="admin-nav">
           {TABS.map(t => (
-            <button key={t} className={`admin-nav-btn ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+            <button key={t} className={`admin-nav-btn ${tab === t ? 'active' : ''}`} onClick={() => selectTab(t)}>
               {t === 'Dashboard' && '📊'} {t === 'Products' && '🗂️'} {t === 'Orders' && '📦'} {t === 'Offers' && '🎁'} {t} {t === 'Settings' && '⚙️'}
               {t === 'Orders' && pendingOrders > 0 && <span className="nav-badge">{pendingOrders}</span>}
             </button>
@@ -84,10 +90,14 @@ export default function AdminDashboard() {
           <button className="logout-btn" onClick={logout}>Logout</button>
         </div>
       </aside>
+      <div className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)} />
 
       <main className="admin-main">
         <div className="admin-topbar">
-          <h2>{tab}</h2>
+          <div className="topbar-left">
+            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(prev => !prev)}>☰ Menu</button>
+            <h2>{tab}</h2>
+          </div>
           <a href="/" target="_blank" rel="noreferrer" className="view-site-btn">View Website ↗</a>
         </div>
         {error && <div style={{ background: '#ffebee', color: '#c62828', padding: '12px 16px', borderRadius: '4px', margin: '16px', fontSize: '14px' }}>{error}</div>}

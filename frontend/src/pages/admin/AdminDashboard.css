@@ -137,6 +137,80 @@
   .stats-grid { grid-template-columns: repeat(2,1fr); }
 }
 
+.admin-sidebar.mobile-open {
+  display: flex;
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 260px;
+  max-width: 100%;
+  background: var(--dark);
+  z-index: 300;
+  transform: translateX(0);
+  box-shadow: 4px 0 20px rgba(0,0,0,0.25);
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+.mobile-overlay.active {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 250;
+}
+
+.mobile-menu-btn {
+  display: none;
+  border: none;
+  background: var(--primary);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 16px;
+}
+
+.admin-topbar .topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .admin-layout { flex-direction: column; }
+  .admin-sidebar { display: none; width: 100%; position: relative; }
+  .admin-main { margin-left: 0; }
+  .admin-topbar { padding: 14px 16px; flex-direction: column; align-items: stretch; gap: 12px; }
+  .admin-topbar h2 { margin: 0; }
+  .view-site-btn { width: 100%; text-align: center; }
+  .mobile-menu-btn { display: inline-flex; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .admin-table, .orders-list, .offer-admin-card, .setting-row, .modal { width: 100%; }
+  .admin-table th, .admin-table td { padding: 10px 12px; font-size: 12px; }
+  .tab-actions { flex-direction: column; align-items: stretch; }
+  .tab-filters { width: 100%; justify-content: flex-start; }
+  .tab-filters button { flex: 1 1 auto; }
+  .modal { max-width: 100%; margin: 0 8px; }
+  .modal-body { padding: 16px; }
+  .modal-footer { flex-direction: column; align-items: stretch; }
+  .modal-footer button { width: 100%; }
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .checkbox-row { flex-direction: column; align-items: flex-start; }
+  .sr-display { flex-direction: column; align-items: stretch; }
+  .sr-edit-row { flex-direction: column; align-items: stretch; }
+  .sr-edit-row input { width: 100%; }
+  .admin-override-grid { gap: 14px; }
+  .ao-row { grid-template-columns: 1fr; }
+  .oc-body { padding: 14px; }
+  .oc-section { padding: 14px; }
+  .oc-actions { justify-content: stretch; }
+  .oc-actions-left { width: 100%; }
+  .save-order-btn { width: 100%; }
+}
+
 /* ── Orders list (expandable cards) ── */
 .orders-list { display:flex; flex-direction:column; gap:10px; }
 .order-card { background:white; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
