@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: '/api' });
+const API = axios.create({
+  baseURL: 'https://tile-house.onrender.com/api'
+});
 
 // Attach correct token — admin and user routes sometimes overlap
 API.interceptors.request.use((config) => {
