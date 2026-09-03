@@ -251,7 +251,8 @@ export default function CheckoutPage() {
     if(!form.customerName.trim()||form.customerName.trim().length<2) e.customerName='Enter full name (min 2 characters)';
     else if(!/^[a-zA-Z\s.'\-]+$/.test(form.customerName.trim())) e.customerName='Name should contain letters only';
     if(!/^[6-9][0-9]{9}$/.test(form.phone.replace(/\s+/g,''))) e.phone='Enter valid 10-digit mobile number (must start with 6, 7, 8 or 9)';
-    if(form.email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email='Enter a valid email address';
+    if(!form.email.trim()) e.email='Email is required for order confirmation';
+    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email='Enter a valid email address';
     if(!form.address.trim()||form.address.trim().length<10) e.address='Enter complete address (min 10 characters)';
     if(!form.district.trim()) e.district='Select your district';
     if(!form.state) e.state='Select your state';
@@ -263,7 +264,9 @@ export default function CheckoutPage() {
   // Check if form is complete enough to enable Place Order
   const isFormValid = ()=>{
     const phoneOk = /^[6-9][0-9]{9}$/.test(form.phone.replace(/\s+/g,''));
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
     return form.customerName.trim().length>=2 && phoneOk &&
+      emailOk &&
       form.address.trim().length>=10 && form.district && form.state &&
       /^[1-9][0-9]{5}$/.test(form.pincode) && distanceKm!=null;
   };
@@ -354,8 +357,8 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="form-group full">
-                  <label>Email <small>(Optional — order confirmation will be sent)</small></label>
-                  <input name="email" value={form.email} onChange={handleChange} placeholder="yourname@email.com" type="email" />
+                  <label>Email *</label>
+                  <input name="email" value={form.email} onChange={handleChange} placeholder="yourname@email.com" type="email" required />
                   {errors.email&&<span className="form-error">{errors.email}</span>}
                 </div>
 

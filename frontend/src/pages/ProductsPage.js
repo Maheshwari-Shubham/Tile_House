@@ -86,6 +86,11 @@ export default function ProductsPage() {
     return matchCompany && matchFinish && matchCategory && matchDim && matchSearch;
   });
 
+  // Keep the customer catalogue compact while the remaining products are added.
+  const visibleProducts = filtered.filter((product, index, products) =>
+    products.slice(0, index).filter(previous => previous.company === product.company).length < 5
+  );
+
   // Build grouped structure:
   // group label → array of { dim, label, icon, products[] }
   const buildGrouped = () => {
@@ -93,7 +98,7 @@ export default function ProductsPage() {
 
     // Non-outdoor: match by exact dimensions
     DIMENSION_SECTIONS.forEach(ds => {
-      const items = filtered.filter(p => p.dimensions === ds.dim && p.sizeGroup !== 'outdoor');
+      const items = visibleProducts.filter(p => p.dimensions === ds.dim && p.sizeGroup !== 'outdoor');
       if (items.length === 0) return;
       if (!result[ds.group]) result[ds.group] = [];
       // Check if this dim sub-section already exists
@@ -106,7 +111,7 @@ export default function ProductsPage() {
     });
 
     // Outdoor: all sizeGroup=outdoor
-    const outdoorItems = filtered.filter(p => p.sizeGroup === 'outdoor');
+    const outdoorItems = visibleProducts.filter(p => p.sizeGroup === 'outdoor');
     if (outdoorItems.length > 0) {
       // Sub-group by dimensions within outdoor
       const outdoorDims = [...new Set(outdoorItems.map(p => p.dimensions))];

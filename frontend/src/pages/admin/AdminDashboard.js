@@ -11,6 +11,10 @@ import './AdminDashboard.css';
 
 const TABS = ['Dashboard', 'Products', 'Orders', 'Offers', 'Settings'];
 
+const getSampleProducts = (products) => products.filter((product, index) =>
+  products.slice(0, index).filter(previous => previous.company === product.company).length < 5
+);
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('Dashboard');
@@ -103,7 +107,7 @@ export default function AdminDashboard() {
         </div>
         {error && <div style={{ background: '#ffebee', color: '#c62828', padding: '12px 16px', borderRadius: '4px', margin: '16px', fontSize: '14px' }}>{error}</div>}
         {loading && <div className="spinner" />}
-        {!loading && tab === 'Dashboard' && <DashboardTab products={products} orders={orders} totalRevenue={totalRevenue} pendingOrders={pendingOrders} />}
+        {!loading && tab === 'Dashboard' && <DashboardTab products={getSampleProducts(products)} orders={orders} totalRevenue={totalRevenue} pendingOrders={pendingOrders} />}
         {!loading && tab === 'Products'  && <ProductsTab products={products} onRefresh={loadData} />}
         {!loading && tab === 'Orders'    && <OrdersTab orders={orders} onRefresh={loadData} />}
         {!loading && tab === 'Offers'    && <OffersTab offers={offers} onRefresh={loadData} />}
@@ -275,7 +279,7 @@ function ProductsTab({ products, onRefresh }) {
       if (editProduct) await updateProduct(editProduct, form);
       else await createProduct(form);
       setShowForm(false); onRefresh();
-    } catch { alert('Error saving product'); }
+    } catch (err) { alert(err.response?.data?.error || 'Error saving product'); }
     finally { setSaving(false); }
   };
 

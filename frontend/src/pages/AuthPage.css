@@ -81,6 +81,45 @@
   box-sizing: border-box;
 }
 .auth-group input:focus { border-color: var(--primary); }
+.password-input-wrap { position: relative; }
+.password-input-wrap input { padding-right: 44px; }
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  padding: 5px;
+  cursor: pointer;
+  color: #8f603d;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.password-toggle:hover {
+  color: var(--primary-dark);
+  transform: translateY(-50%) scale(1.08);
+}
+.password-visibility-icon {
+  display: block;
+  width: 22px;
+  height: 18px;
+  color: #8f603d;
+}
+.password-eye-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.password-eye-slash {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
 .auth-field-error {
   display: block;
   font-size: 12px;

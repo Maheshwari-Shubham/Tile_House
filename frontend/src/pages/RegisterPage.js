@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { userRegister } from '../utils/api';
 import { useUser } from '../context/UserContext';
+import PasswordVisibilityIcon from '../components/PasswordVisibilityIcon';
 import './AuthPage.css';
 
 export default function RegisterPage() {
   const [form, setForm]     = useState({ name: '', phone: '', email: '', password: '', confirm: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { login } = useUser();
   const navigate  = useNavigate();
+  const location = useLocation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +43,7 @@ export default function RegisterPage() {
     try {
       const res = await userRegister({ name: form.name.trim(), phone: form.phone, email: form.email.trim(), password: form.password });
       login(res.data.user, res.data.token);
-      navigate('/my-orders');
+      navigate(location.state?.from || '/');
     } catch (err) {
       setErrors({ server: err.response?.data?.error || 'Registration failed. Please try again.' });
     } finally { setLoading(false); }
@@ -76,12 +80,22 @@ export default function RegisterPage() {
           </div>
           <div className="auth-group">
             <label>Password * <small>(min 6 characters)</small></label>
-            <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="Create a password" />
+            <div className="password-input-wrap">
+              <input name="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={handleChange} placeholder="Create a password" />
+              <button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                <PasswordVisibilityIcon hidden={!showPassword} />
+              </button>
+            </div>
             {errors.password && <span className="auth-field-error">{errors.password}</span>}
           </div>
           <div className="auth-group">
             <label>Confirm Password *</label>
-            <input name="confirm" type="password" value={form.confirm} onChange={handleChange} placeholder="Re-enter password" />
+            <div className="password-input-wrap">
+              <input name="confirm" type={showConfirmPassword ? 'text' : 'password'} value={form.confirm} onChange={handleChange} placeholder="Re-enter password" />
+              <button type="button" className="password-toggle" onClick={() => setShowConfirmPassword(value => !value)} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
+                <PasswordVisibilityIcon hidden={!showConfirmPassword} />
+              </button>
+            </div>
             {errors.confirm && <span className="auth-field-error">{errors.confirm}</span>}
           </div>
           <button type="submit" className="auth-btn" disabled={loading}>

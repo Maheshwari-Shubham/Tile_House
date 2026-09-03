@@ -88,7 +88,11 @@ const DEFAULTS = [
 // Seed defaults
 async function seedSettings() {
   for (const s of DEFAULTS) {
-    await Settings.findOneAndUpdate({ key: s.key }, s, { upsert: true, new: true });
+    await Settings.findOneAndUpdate(
+      { key: s.key },
+      { $setOnInsert: s },
+      { upsert: true, new: true }
+    );
   }
 }
 seedSettings().catch(console.error);
@@ -148,6 +152,7 @@ router.post('/test-email', auth, async (req, res) => {
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      family: 4,
       auth: { user: cfg.email_from, pass: cfg.email_pass },
     });
     await transporter.sendMail({

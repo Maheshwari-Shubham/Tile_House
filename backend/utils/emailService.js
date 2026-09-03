@@ -21,6 +21,7 @@ async function getEmailCfg() {
 function makeTransporter(cfg) {
   return nodemailer.createTransport({
     service: 'gmail',
+    family: 4,
     auth: { user: cfg.email_from, pass: cfg.email_pass },
   });
 }

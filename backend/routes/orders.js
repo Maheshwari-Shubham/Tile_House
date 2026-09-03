@@ -7,6 +7,10 @@ const { sendOrderConfirmation, sendOrderConfirmed, sendDispatchNotification } = 
 // Place order — links to user account
 router.post('/', async (req, res) => {
   try {
+    const email = req.body.email?.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'A valid email address is required for order confirmation.' });
+    }
     const order = new Order(req.body);
     // Priority 1: userId sent directly from frontend (user is logged in)
     if (req.body.userId) {

@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { userLogin } from '../utils/api';
 import { useUser } from '../context/UserContext';
+import PasswordVisibilityIcon from '../components/PasswordVisibilityIcon';
 import './AuthPage.css';
 
 export default function LoginPage() {
   const [form, setForm]     = useState({ phone: '', password: '' });
   const [error, setError]   = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useUser();
   const navigate  = useNavigate();
   const location  = useLocation();
-  const from = location.state?.from || '/my-orders';
+  const from = location.state?.from || '/';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,8 +59,13 @@ export default function LoginPage() {
           </div>
           <div className="auth-group">
             <label>Password</label>
-            <input name="password" type="password" value={form.password}
-              onChange={handleChange} placeholder="Enter your password" />
+            <div className="password-input-wrap">
+              <input name="password" type={showPassword ? 'text' : 'password'} value={form.password}
+                onChange={handleChange} placeholder="Enter your password" />
+              <button type="button" className="password-toggle" onClick={() => setShowPassword(value => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                <PasswordVisibilityIcon hidden={!showPassword} />
+              </button>
+            </div>
           </div>
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login →'}
