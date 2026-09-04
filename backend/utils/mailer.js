@@ -15,10 +15,15 @@ function isConfigured(cfg) {
 function makeSmtpTransporter(cfg) {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
-    family: 4,
-    auth: { user: cfg.email_from, pass: cfg.email_pass },
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: String(process.env.SMTP_SECURE || 'false').toLowerCase() === 'true',
+    auth: {
+      user: cfg.email_from,
+      pass: cfg.email_pass,
+    },
+    tls: {
+      servername: 'smtp.gmail.com',
+    },
   });
 }
 
