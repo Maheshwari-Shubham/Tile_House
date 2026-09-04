@@ -151,7 +151,9 @@ router.post('/test-email', auth, async (req, res) => {
     }
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: Number(process.env.SMTP_PORT || 465),
+      secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
       family: 4,
       auth: { user: cfg.email_from, pass: cfg.email_pass },
     });
@@ -168,7 +170,10 @@ router.post('/test-email', auth, async (req, res) => {
     });
     res.json({ message: `✅ Test email sent to ${cfg.email_from} — check your inbox!` });
   } catch (err) {
-    res.status(500).json({ error: `Email test failed: ${err.message}` });
+    const detail = err.code === 'ENETUNREACH'
+      ? 'The live server cannot reach Gmail SMTP. Check SMTP_HOST/SMTP_PORT or use an HTTPS email provider such as Resend.'
+      : err.message;
+    res.status(500).json({ error: `Email test failed: ${detail}` });
   }
 });
 

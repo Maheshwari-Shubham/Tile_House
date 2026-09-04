@@ -20,7 +20,9 @@ async function getEmailCfg() {
 
 function makeTransporter(cfg) {
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: Number(process.env.SMTP_PORT || 465),
+    secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
     family: 4,
     auth: { user: cfg.email_from, pass: cfg.email_pass },
   });
