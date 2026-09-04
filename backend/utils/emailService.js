@@ -12,7 +12,7 @@ async function getEmailCfg() {
   c.email_from      = c.email_from      || process.env.EMAIL_USER;
   c.email_pass      = c.email_pass      || process.env.EMAIL_PASS;
   c.email_from_name = c.email_from_name || process.env.EMAIL_FROM_NAME || 'Tile House';
-  c.shop_phone      = c.shop_phone      || process.env.SHOP_PHONE || '+91 98765 43210';
+  c.shop_phone      = c.shop_phone      || process.env.SHOP_PHONE || '+91 9872635534';
   c.shop_address    = c.shop_address    || process.env.SHOP_ADDRESS || 'Bhucho Mandi, Bathinda, Punjab';
 
   return c;
@@ -76,7 +76,7 @@ async function sendOrderConfirmation(order) {
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
-    const shopPhone   = cfg.shop_phone      || '+91 98765 43210';
+    const shopPhone   = cfg.shop_phone      || '+91 9872635534';
     const shopAddress = cfg.shop_address    || 'Bhucho Mandi, Bathinda, Punjab';
 
     const itemRows = (order.items || []).map(i => `
@@ -143,7 +143,7 @@ async function sendOrderConfirmed(order) {
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
-    const shopPhone   = cfg.shop_phone      || '+91 98765 43210';
+    const shopPhone   = cfg.shop_phone      || '+91 9872635534';
     const shopAddress = cfg.shop_address    || 'Bhucho Mandi, Bathinda, Punjab';
 
     const html = `
@@ -192,7 +192,7 @@ async function sendDispatchNotification(order) {
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
-    const shopPhone   = cfg.shop_phone      || '+91 98765 43210';
+    const shopPhone   = cfg.shop_phone      || '+91 9872635534';
     const shopAddress = cfg.shop_address    || 'Bhucho Mandi, Bathinda, Punjab';
 
     const driverSection = (order.driverName || order.driverPhone || order.vehicleNumber) ? `

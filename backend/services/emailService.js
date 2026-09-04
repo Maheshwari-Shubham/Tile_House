@@ -65,7 +65,7 @@ async function sendOrderConfirmation(order) {
       </p>
 
       <p style="color:#888;font-size:13px;margin-top:24px;">
-        If you have any questions, call us at <strong>+91 98765 43210</strong><br/>
+        If you have any questions, call us at <strong>+91 9872635534</strong><br/>
         Tile House, Bhucho Mandi, Bathinda, Punjab
       </p>
     </div>
@@ -111,7 +111,7 @@ async function sendDispatchNotification(order) {
         <p><strong>Total Amount:</strong> ₹${order.totalAmount?.toLocaleString('en-IN')} (${order.paymentMethod})</p>
       </div>
 
-      <p style="color:#888;font-size:13px;margin-top:20px;">Questions? Call us at +91 98765 43210</p>
+      <p style="color:#888;font-size:13px;margin-top:20px;">Questions? Call us at +91 9872635534</p>
     </div>
     <div style="background:#1a1a1a;padding:16px;text-align:center;color:#aaa;font-size:12px;">
       © Tile House — Premium Tiles & Marble

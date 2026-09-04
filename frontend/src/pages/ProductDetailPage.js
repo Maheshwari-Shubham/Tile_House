@@ -217,8 +217,7 @@ export default function ProductDetailPage() {
 
             {/* Info Note */}
             <div className="detail-note">
-              <div>📞 Need help with quantity calculation? Call us at <strong>+91 98765 43210</strong></div>
-              <div>🚚 Free delivery across Punjab on orders above ₹10,000</div>
+              <div>📞 Need help with quantity calculation? Call us at <strong>+91 9872635534</strong></div>
             </div>
           </div>
         </div>

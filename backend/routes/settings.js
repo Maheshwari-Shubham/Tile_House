@@ -74,7 +74,7 @@ const DEFAULTS = [
   },
   {
     key: 'shop_phone',
-    value: '+91 98765 43210',
+    value: '+91 9872635534',
     label: 'Shop Phone Number',
     description: 'Appears in all customer emails as your contact number',
   },
