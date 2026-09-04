@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const Settings = require('../models/Settings');
 const auth = require('../middleware/auth');
+const { sendMail, isConfigured } = require('../utils/mailer');
 
 // Default settings - seeded on first run
 const DEFAULTS = [
@@ -146,18 +147,14 @@ router.post('/test-email', auth, async (req, res) => {
     cfg.email_pass      = cfg.email_pass      || process.env.EMAIL_PASS;
     cfg.email_from_name = cfg.email_from_name || process.env.EMAIL_FROM_NAME || 'Tile House';
 
-    if (!cfg.email_from || !cfg.email_pass) {
-      return res.status(400).json({ error: 'Email not configured. Set Sender Email and App Password in Settings or .env first.' });
+    if (!isConfigured(cfg)) {
+      return res.status(400).json({
+        error: String(process.env.EMAIL_PROVIDER || 'smtp').toLowerCase() === 'resend'
+          ? 'Resend is not configured. Set RESEND_API_KEY and RESEND_FROM in Render.'
+          : 'Email not configured. Set Sender Email and App Password in Settings or .env first.',
+      });
     }
-    const nodemailer = require('nodemailer');
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT || 465),
-      secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
-      family: 4,
-      auth: { user: cfg.email_from, pass: cfg.email_pass },
-    });
-    await transporter.sendMail({
+    await sendMail(cfg, {
       from: `"${cfg.email_from_name}" <${cfg.email_from}>`,
       to: cfg.email_from,
       subject: '✅ Tile House Email Configuration — Working!',

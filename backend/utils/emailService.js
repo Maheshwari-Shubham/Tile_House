@@ -1,5 +1,5 @@
-const nodemailer = require('nodemailer');
 const Settings   = require('../models/Settings');
+const { sendMail, isConfigured } = require('./mailer');
 
 // Read email credentials from database (admin-editable via Settings tab)
 async function getEmailCfg() {
@@ -16,16 +16,6 @@ async function getEmailCfg() {
   c.shop_address    = c.shop_address    || process.env.SHOP_ADDRESS || 'Bhucho Mandi, Bathinda, Punjab';
 
   return c;
-}
-
-function makeTransporter(cfg) {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
-    family: 4,
-    auth: { user: cfg.email_from, pass: cfg.email_pass },
-  });
 }
 
 // Shared helpers
@@ -82,7 +72,7 @@ function addressBlock(o) {
 async function sendOrderConfirmation(order) {
   try {
     const cfg = await getEmailCfg();
-    if (!cfg.email_from || !cfg.email_pass) { console.log('📧 Email not configured in Settings.'); return; }
+    if (!isConfigured(cfg)) { console.log('📧 Email not configured in Settings.'); return; }
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
@@ -133,7 +123,7 @@ async function sendOrderConfirmation(order) {
       </div>
     </div>`;
 
-    await makeTransporter(cfg).sendMail({
+    await sendMail(cfg, {
       from: `"${fromName}" <${cfg.email_from}>`,
       to: order.email,
       subject: `✅ Order Received ${orderId(order)} | Tile House`,
@@ -149,7 +139,7 @@ async function sendOrderConfirmation(order) {
 async function sendOrderConfirmed(order) {
   try {
     const cfg = await getEmailCfg();
-    if (!cfg.email_from || !cfg.email_pass) { console.log('📧 Email not configured in Settings.'); return; }
+    if (!isConfigured(cfg)) { console.log('📧 Email not configured in Settings.'); return; }
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
@@ -182,7 +172,7 @@ async function sendOrderConfirmed(order) {
       </div>
     </div>`;
 
-    await makeTransporter(cfg).sendMail({
+    await sendMail(cfg, {
       from: `"${fromName}" <${cfg.email_from}>`,
       to: order.email,
       subject: `✅ Order Confirmed ${orderId(order)} | Tile House`,
@@ -198,7 +188,7 @@ async function sendOrderConfirmed(order) {
 async function sendDispatchNotification(order) {
   try {
     const cfg = await getEmailCfg();
-    if (!cfg.email_from || !cfg.email_pass) { console.log('📧 Email not configured in Settings.'); return; }
+    if (!isConfigured(cfg)) { console.log('📧 Email not configured in Settings.'); return; }
     if (!order.email || !order.email.includes('@')) { console.log('📧 No customer email for order', orderId(order)); return; }
 
     const fromName    = cfg.email_from_name || 'Tile House';
@@ -243,7 +233,7 @@ async function sendDispatchNotification(order) {
       </div>
     </div>`;
 
-    await makeTransporter(cfg).sendMail({
+    await sendMail(cfg, {
       from: `"${fromName}" <${cfg.email_from}>`,
       to: order.email,
       subject: `🚚 Out for Delivery ${orderId(order)} | Tile House`,

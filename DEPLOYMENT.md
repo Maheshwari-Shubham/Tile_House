@@ -10,7 +10,7 @@ This guide shows how to deploy Tile House to production using popular hosting pl
 - [ ] Frontend `.env.local` file created with production API URL
 - [ ] MongoDB Atlas account created (or production MongoDB instance)
 - [ ] Cloudinary unsigned upload preset configured
-- [ ] Gmail app password generated (if using email features)
+- [ ] Resend account and verified sender created (recommended for Render email)
 - [ ] All changes committed to Git (except `.env` files)
 
 ---
@@ -169,6 +169,23 @@ curl https://your-backend-url/api/products
 - Try: Login → Add Product → Upload Image → Place Order
 - Check admin dashboard
 
+### Configure Email on Render
+
+Render commonly times out direct SMTP connections. Use Resend's HTTPS API for production:
+
+1. Create an account at https://resend.com and verify the domain or sender email you will use.
+2. Create a Resend API key.
+3. In the Render backend service, add these environment variables:
+   ```
+   EMAIL_PROVIDER=resend
+   RESEND_API_KEY=re_xxxxxxxxx
+   RESEND_FROM=Tile House <noreply@your-verified-domain.com>
+   ```
+4. Save the variables and redeploy the backend.
+5. Open `/admin`, go to Settings, and click **Send Test Email**.
+
+`RESEND_FROM` must use the exact email address or domain verified in Resend. The Gmail settings can remain in the database for display, but they are not used when `EMAIL_PROVIDER=resend`.
+
 ### Verify MongoDB Connection
 ```bash
 # In backend logs, you should see:
@@ -189,7 +206,10 @@ curl https://your-backend-url/api/products
 | `JWT_SECRET` | `openssl rand -base64 32` | Generate strong random secret |
 | `REACT_APP_API_URL` | `https://api.yourdomain.com` | Backend URL for frontend |
 | `CLOUDINARY_UPLOAD_PRESET` | `tile_house_unsigned` | Create in Cloudinary dashboard |
-| `EMAIL_PASS` | Gmail app password | Get from myaccount.google.com/apppasswords |
+| `EMAIL_PROVIDER` | `resend` | Use `smtp` only when the hosting provider permits SMTP |
+| `RESEND_API_KEY` | `re_...` | Resend API key; keep it secret |
+| `RESEND_FROM` | `Tile House <noreply@example.com>` | Must be a verified Resend sender |
+| `EMAIL_PASS` | Gmail app password | Used only with `EMAIL_PROVIDER=smtp` |
 
 ---
 
@@ -205,7 +225,9 @@ curl https://your-backend-url/api/products
 - **Solution**: Verify `CLOUDINARY_UPLOAD_PRESET` is set to Unsigned mode
 
 ### "Email not sending"
-- **Solution**: Use Gmail app password, not regular password. Enable 2FA first.
+- **Render**: Set `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and `RESEND_FROM`, then redeploy.
+- **Resend 403/422**: Verify that `RESEND_FROM` exactly matches a verified sender/domain.
+- **Local SMTP**: Use a Gmail app password, not a regular password. Enable 2FA first.
 
 ---
 
