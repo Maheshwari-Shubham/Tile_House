@@ -171,20 +171,20 @@ curl https://your-backend-url/api/products
 
 ### Configure Email on Render
 
-Render commonly times out direct SMTP connections. Use Resend's HTTPS API for production:
+Render commonly times out direct SMTP connections. To send from your existing Gmail address without buying a domain, use Brevo's HTTPS API:
 
-1. Create an account at https://resend.com and verify the domain or sender email you will use.
-2. Create a Resend API key.
+1. Create an account at https://www.brevo.com and add your existing Gmail address under **Senders & IP**.
+2. Open the verification email from Brevo and verify that Gmail address.
+3. Create a Brevo API key under **SMTP & API**.
 3. In the Render backend service, add these environment variables:
    ```
-   EMAIL_PROVIDER=resend
-   RESEND_API_KEY=re_xxxxxxxxx
-   RESEND_FROM=Tile House <noreply@your-verified-domain.com>
+   EMAIL_PROVIDER=brevo
+   BREVO_API_KEY=xkeysib-xxxxxxxxx
    ```
 4. Save the variables and redeploy the backend.
 5. Open `/admin`, go to Settings, and click **Send Test Email**.
 
-`RESEND_FROM` must use the exact email address or domain verified in Resend. The Gmail settings can remain in the database for display, but they are not used when `EMAIL_PROVIDER=resend`.
+The Gmail address in Admin → Settings → Sender Email is used as the Brevo sender. Your Gmail app password is not used by Brevo. No domain purchase is required.
 
 ### Verify MongoDB Connection
 ```bash
@@ -209,6 +209,7 @@ Render commonly times out direct SMTP connections. Use Resend's HTTPS API for pr
 | `EMAIL_PROVIDER` | `resend` | Use `smtp` only when the hosting provider permits SMTP |
 | `RESEND_API_KEY` | `re_...` | Resend API key; keep it secret |
 | `RESEND_FROM` | `Tile House <noreply@example.com>` | Must be a verified Resend sender |
+| `BREVO_API_KEY` | `xkeysib-...` | Brevo API key; keep it secret |
 | `EMAIL_PASS` | Gmail app password | Used only with `EMAIL_PROVIDER=smtp` |
 
 ---
@@ -225,7 +226,8 @@ Render commonly times out direct SMTP connections. Use Resend's HTTPS API for pr
 - **Solution**: Verify `CLOUDINARY_UPLOAD_PRESET` is set to Unsigned mode
 
 ### "Email not sending"
-- **Render**: Set `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and `RESEND_FROM`, then redeploy.
+- **Render, same Gmail sender without a domain**: Verify the Gmail address in Brevo, then set `EMAIL_PROVIDER=brevo` and `BREVO_API_KEY`.
+- **Resend**: Set `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and `RESEND_FROM`, then redeploy.
 - **Resend 403/422**: Verify that `RESEND_FROM` exactly matches a verified sender/domain.
 - **Local SMTP**: Use a Gmail app password, not a regular password. Enable 2FA first.
 

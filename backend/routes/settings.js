@@ -151,7 +151,9 @@ router.post('/test-email', auth, async (req, res) => {
       return res.status(400).json({
         error: String(process.env.EMAIL_PROVIDER || 'smtp').toLowerCase() === 'resend'
           ? 'Resend is not configured. Set RESEND_API_KEY and RESEND_FROM in Render.'
-          : 'Email not configured. Set Sender Email and App Password in Settings or .env first.',
+          : String(process.env.EMAIL_PROVIDER || 'smtp').toLowerCase() === 'brevo'
+            ? 'Brevo is not configured. Set BREVO_API_KEY in Render and verify the sender email in Brevo.'
+            : 'Email not configured. Set Sender Email and App Password in Settings or .env first.',
       });
     }
     await sendMail(cfg, {
