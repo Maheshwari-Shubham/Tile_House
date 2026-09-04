@@ -12,12 +12,11 @@ const STATUS = {
 };
 
 export default function MyOrdersPage() {
-  const { user, isLoggedIn, logout } = useUser();
+  const { isLoggedIn } = useUser();
   const navigate = useNavigate();
   const [orders, setOrders]     = useState([]);
   const [loading, setLoading]   = useState(true);
   const [expanded, setExpanded] = useState(null);
-  const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login', { state: { from: '/my-orders' } }); return; }
@@ -32,24 +31,6 @@ export default function MyOrdersPage() {
         <div className="myorders-header">
           <div>
             <h1>My Orders</h1>
-            <p>
-              Welcome,{' '}
-              <strong
-                style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                onClick={() => setShowLogout(prev => !prev)}
-              >
-                {user?.name}
-              </strong>{' '}
-              · {user?.phone}
-            </p>
-            {showLogout && (
-              <button
-                className="logout-user-btn"
-                onClick={() => { logout(); navigate('/'); }}
-              >
-                Logout
-              </button>
-            )}
           </div>
         </div>
 
