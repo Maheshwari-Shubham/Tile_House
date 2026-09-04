@@ -1,33 +1,81 @@
 const express = require('express');
 const router  = express.Router();
 const Order   = require('../models/Order');
+const Product = require('../models/Product');
 const auth    = require('../middleware/auth');
 const { sendOrderConfirmation, sendOrderConfirmed, sendDispatchNotification } = require('../utils/emailService');
 
 // Place order — links to user account
 router.post('/', async (req, res) => {
+  let session;
   try {
     const email = req.body.email?.trim();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'A valid email address is required for order confirmation.' });
     }
-    const order = new Order(req.body);
-    // Priority 1: userId sent directly from frontend (user is logged in)
-    if (req.body.userId) {
-      order.userId = req.body.userId;
-    } else {
-      // Priority 2: look up by phone number as fallback
-      try {
-        const User = require('../models/User');
-        const user = await User.findOne({ phone: req.body.phone?.trim() });
-        if (user) order.userId = user._id;
-      } catch {}
+    if (!Array.isArray(req.body.items) || req.body.items.length === 0) {
+      return res.status(400).json({ error: 'Your cart is empty.' });
     }
-    await order.save();
+
+    const requestedByProduct = new Map();
+    for (const item of req.body.items) {
+      const quantity = Number(item.squareFeet);
+      if (!item.productId || !Number.isFinite(quantity) || quantity <= 0) {
+        return res.status(400).json({ error: 'Each product must have a valid square-foot quantity.' });
+      }
+      requestedByProduct.set(
+        String(item.productId),
+        (requestedByProduct.get(String(item.productId)) || 0) + quantity
+      );
+    }
+
+    session = await require('mongoose').startSession();
+    let order;
+    await session.withTransaction(async () => {
+      for (const [productId, quantity] of requestedByProduct) {
+        const product = await Product.findById(productId).session(session);
+        if (!product) throw new Error('One of the products in your cart no longer exists.');
+        if (!product.inStock) throw new Error(`${product.name} is currently out of stock.`);
+        if (product.stockSquareFeet == null) {
+          throw new Error(`${product.name} has no stock quantity configured yet.`);
+        }
+        if (product.stockSquareFeet < quantity) {
+          throw new Error(`${product.name} has only ${product.stockSquareFeet} sq.ft available.`);
+        }
+
+        const updated = await Product.findOneAndUpdate(
+          { _id: productId, inStock: true, stockSquareFeet: { $gte: quantity } },
+          { $inc: { stockSquareFeet: -quantity } },
+          { new: true, session }
+        );
+        if (!updated) throw new Error(`${product.name} stock changed. Please review your cart and try again.`);
+        if (updated.stockSquareFeet === 0) {
+          await Product.updateOne({ _id: productId }, { $set: { inStock: false } }, { session });
+        }
+      }
+
+      const orderData = { ...req.body };
+      delete orderData._id;
+      const orderDocument = new Order(orderData);
+      if (req.body.userId) {
+        orderDocument.userId = req.body.userId;
+      } else {
+        try {
+          const User = require('../models/User');
+          const user = await User.findOne({ phone: req.body.phone?.trim() }).session(session);
+          if (user) orderDocument.userId = user._id;
+        } catch {}
+      }
+      await orderDocument.save({ session });
+      order = orderDocument;
+    });
+
     sendOrderConfirmation(order).catch(() => {});
     res.status(201).json({ message: 'Order placed successfully!', orderId: order._id });
   } catch (err) {
     res.status(400).json({ error: err.message });
+  } finally {
+    if (session) await session.endSession();
   }
 });
 

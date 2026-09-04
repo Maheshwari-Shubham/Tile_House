@@ -29,6 +29,7 @@ const productSchema = new mongoose.Schema({
   image:       { type: String, default: '' },
   description: { type: String, default: '' },
   inStock:     { type: Boolean, default: true },
+  stockSquareFeet: { type: Number, default: null, min: 0 },
   featured:    { type: Boolean, default: false },
 }, { timestamps: true });
 

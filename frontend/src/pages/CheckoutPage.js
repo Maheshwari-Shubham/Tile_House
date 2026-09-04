@@ -301,7 +301,9 @@ export default function CheckoutPage() {
       clearCart();
       try{sessionStorage.removeItem('checkout_form');sessionStorage.removeItem('checkout_dist');}catch{}
       navigate('/order-success',{state:{orderId:res.data.orderId,form,grandTotal}});
-    } catch{ alert('Failed to place order. Please try again.'); }
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to place order. Please try again.');
+    }
     finally{ setLoading(false); }
   };
 

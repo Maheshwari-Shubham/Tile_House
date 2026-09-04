@@ -267,7 +267,7 @@ function ProductsTab({ products, onRefresh }) {
   const [editProduct, setEditProduct] = useState(null);
   const [filterCat, setFilterCat] = useState('All');
   const [saving, setSaving] = useState(false);
-  const emptyForm = { name:'', company:'Somany', category:'floor', finish:'matte', sizeGroup:'medium', dimensions:'600x600 mm', pricePerSqFt:'', image:'', description:'', inStock:true, featured:false };
+  const emptyForm = { name:'', company:'Somany', category:'floor', finish:'matte', sizeGroup:'medium', dimensions:'600x600 mm', pricePerSqFt:'', stockSquareFeet:0, image:'', description:'', inStock:true, featured:false };
   const [form, setForm] = useState(emptyForm);
 
   const openAdd  = () => { setForm(emptyForm); setEditProduct(null); setShowForm(true); };
@@ -312,7 +312,7 @@ function ProductsTab({ products, onRefresh }) {
               <td><span className={`badge badge-${p.finish}`}>{p.finish}</span></td>
               <td>{p.dimensions}</td>
               <td><strong style={{color:'var(--primary)'}}>₹{p.pricePerSqFt}</strong></td>
-              <td><span style={{color:p.inStock?'var(--success)':'var(--danger)',fontWeight:600}}>{p.inStock?'✓':'✗'}</span></td>
+              <td><span style={{color:p.inStock && p.stockSquareFeet > 0?'var(--success)':'var(--danger)',fontWeight:600}}>{p.stockSquareFeet ?? 'Not set'} sq.ft</span></td>
               <td>
                 <button className="tbl-btn edit" onClick={() => openEdit(p)}>✏️ Edit</button>
                 <button className="tbl-btn del"  onClick={() => handleDelete(p._id)}>🗑️</button>
@@ -358,6 +358,7 @@ function ProductsTab({ products, onRefresh }) {
                 </div>
                 <div className="fg"><label>Dimensions</label><input value={form.dimensions} onChange={e=>setForm(f=>({...f,dimensions:e.target.value}))} placeholder="e.g. 600x600 mm" /></div>
                 <div className="fg"><label>Price per Sq.Ft (₹)</label><input type="number" value={form.pricePerSqFt} onChange={e=>setForm(f=>({...f,pricePerSqFt:e.target.value}))} /></div>
+                <div className="fg"><label>Available Stock (sq.ft)</label><input type="number" min="0" step="0.01" value={form.stockSquareFeet ?? 0} onChange={e=>setForm(f=>({...f,stockSquareFeet:e.target.value}))} /></div>
                 <div className="fg full"><label>Product Image</label>
                   <ImageUploader
                     currentImage={form.image}
