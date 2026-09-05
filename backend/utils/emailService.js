@@ -166,7 +166,7 @@ async function sendOrderConfirmed(order) {
         ${addressBlock(order)}
 
         <div style="background:#FFF8E1;border-radius:8px;padding:14px 18px;margin-top:20px;font-size:14px">
-          📦 Your tiles are being prepared. You will receive another email with driver details when your order is out for delivery.
+          📦 Your order is confirmed and is being loaded for dispatch. You will receive another email with driver details when your order is out for delivery.
         </div>
         ${footerBlock(fromName, shopAddress, shopPhone)}
       </div>
