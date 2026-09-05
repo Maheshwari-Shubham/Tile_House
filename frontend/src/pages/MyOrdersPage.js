@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { getMyOrders } from '../utils/api';
+import { downloadInvoice } from '../utils/invoice';
 import './MyOrdersPage.css';
 
 const STATUS = {
@@ -57,6 +58,15 @@ export default function MyOrdersPage() {
                     <div className="ocu-right">
                       <div className="ocu-amount">₹{o.totalAmount?.toLocaleString('en-IN')}</div>
                       <span className="ocu-status-badge" style={{background:st.bg,color:st.color}}>{st.label}</span>
+                      {o.status === 'delivered' && (
+                        <button
+                          className="tbl-btn edit"
+                          type="button"
+                          onClick={(event) => { event.stopPropagation(); downloadInvoice(o); }}
+                        >
+                          Download Invoice
+                        </button>
+                      )}
                       <span className="ocu-chevron">{isOpen?'▲':'▼'}</span>
                     </div>
                   </div>
@@ -119,6 +129,7 @@ export default function MyOrdersPage() {
                           <div style={{fontSize:14,color:'#555'}}>{o.adminNote}</div>
                         </div>
                       )}
+
                     </div>
                   )}
                 </div>
