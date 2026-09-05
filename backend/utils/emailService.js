@@ -26,7 +26,11 @@ function headerBlock(color, statusLine) {
   return `
     <div style="background:${color};color:white;padding:28px 32px;
          border-radius:10px 10px 0 0;text-align:center">
-      <h1 style="margin:0;font-size:26px">⬡ Tile House</h1>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+        <img src="https://tile-house.vercel.app/favicon.ico" alt="Tile House logo"
+             width="36" height="36" style="display:block;border:0;border-radius:6px" />
+        <h1 style="margin:0;font-size:26px">Tile House</h1>
+      </div>
       <p style="margin:6px 0 0;opacity:.9;font-size:15px">${statusLine}</p>
     </div>`;
 }
