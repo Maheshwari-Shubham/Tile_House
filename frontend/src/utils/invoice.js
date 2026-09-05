@@ -2,16 +2,39 @@ import { jsPDF } from 'jspdf';
 
 const money = (value) => `Rs. ${(Number(value) || 0).toLocaleString('en-IN')}`;
 
-export function downloadInvoice(order) {
+function loadLogoDataUrl() {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth || 400;
+        canvas.height = image.naturalHeight || 406;
+        canvas.getContext('2d').drawImage(image, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch {
+        resolve(null);
+      }
+    };
+    image.onerror = () => resolve(null);
+    image.src = `${process.env.PUBLIC_URL || ''}/favicon.svg`;
+  });
+}
+
+export async function downloadInvoice(order) {
   const pdf = new jsPDF();
   const orderNumber = String(order._id).slice(-8).toUpperCase();
   const date = new Date(order.createdAt).toLocaleDateString('en-IN');
+  const logo = await loadLogoDataUrl();
   let y = 20;
 
+  if (logo) {
+    pdf.addImage(logo, 'PNG', 20, 10, 18, 18);
+  }
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(22);
   pdf.setTextColor(139, 94, 60);
-  pdf.text('Tile House', 20, y);
+  pdf.text('Tile House', logo ? 43 : 20, y);
 
   y += 9;
   pdf.setFont('helvetica', 'normal');

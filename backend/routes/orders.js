@@ -137,11 +137,11 @@ router.put('/:id', auth, async (req, res) => {
 
     const updated = await Order.findByIdAndUpdate(req.params.id, update, { new: true });
 
-    // Send email based on new status
-    if (status && updated?.email && updated.email.includes('@')) {
-      if (status === 'confirmed') {
+    // Send status emails only when the order enters that status.
+    if (status && updated?.email && updated.email.includes('@') && order?.status !== status) {
+      if (updated.status === 'confirmed') {
         sendOrderConfirmed(updated).catch(e => console.error('Confirmed email error:', e.message));
-      } else if (status === 'out_for_delivery') {
+      } else if (updated.status === 'out_for_delivery') {
         sendDispatchNotification(updated).catch(e => console.error('Dispatch email error:', e.message));
       }
     }
