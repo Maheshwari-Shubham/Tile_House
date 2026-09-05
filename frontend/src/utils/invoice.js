@@ -26,7 +26,7 @@ export async function downloadInvoice(order) {
   const orderNumber = String(order._id).slice(-8).toUpperCase();
   const date = new Date(order.createdAt).toLocaleDateString('en-IN');
   const logo = await loadLogoDataUrl();
-  let y = 20;
+  let y = 22;
 
   if (logo) {
     pdf.addImage(logo, 'PNG', 20, 10, 18, 18);
@@ -36,15 +36,13 @@ export async function downloadInvoice(order) {
   pdf.setTextColor(139, 94, 60);
   pdf.text('Tile House', logo ? 43 : 20, y);
 
-  y += 9;
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(10);
   pdf.setTextColor(80, 80, 80);
-  pdf.text('Tiles, marble and complete delivery service', 20, y);
-  pdf.text(`Invoice: #${orderNumber}`, 145, y - 9);
-  pdf.text(`Date: ${date}`, 145, y - 3);
+  pdf.text(`Invoice: #${orderNumber}`, 145, 16);
+  pdf.text(`Date: ${date}`, 145, 22);
 
-  y += 14;
+  y = 38;
   pdf.setDrawColor(220, 210, 200);
   pdf.line(20, y, 190, y);
   y += 10;
