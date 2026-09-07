@@ -254,7 +254,7 @@ export default function ProductDetailPage() {
 
         {/* Back Button */}
         <div style={{ margin: '20px 0 60px' }}>
-          <button className="back-btn" onClick={() => navigate(-1)}>← Back to Products</button>
+          <button className="back-btn" onClick={() => navigate('/products')}>← Back to Products</button>
         </div>
       </div>
     </div>

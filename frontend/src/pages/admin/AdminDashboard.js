@@ -7,6 +7,7 @@ import {
   getFullSettings, updateSetting, testEmail,
   getAllOffers, createOffer, updateOffer, deleteOffer,
 } from '../../utils/api';
+import { downloadInvoice } from '../../utils/invoice';
 import './AdminDashboard.css';
 
 const TABS = ['Dashboard', 'Products', 'Orders', 'Offers', 'Settings'];
@@ -458,6 +459,15 @@ function OrdersTab({ orders, onRefresh }) {
                 <div className="oc-right">
                   <div className="oc-amount">₹{o.totalAmount?.toLocaleString('en-IN')}</div>
                   <span className={`status-badge status-${o.status}`}>{o.status}</span>
+                    {o.status === 'delivered' && (
+                      <button
+                        className="tbl-btn edit"
+                        type="button"
+                        onClick={(event) => { event.stopPropagation(); downloadInvoice(o); }}
+                      >
+                        Download Invoice
+                      </button>
+                    )}
                   <span className="oc-chevron">{expandedOrder===o._id?'▲':'▼'}</span>
                 </div>
               </div>
