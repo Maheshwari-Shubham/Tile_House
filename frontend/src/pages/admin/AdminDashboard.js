@@ -461,7 +461,7 @@ function OrdersTab({ orders, onRefresh }) {
                   <span className={`status-badge status-${o.status}`}>{o.status}</span>
                     {o.status === 'delivered' && (
                       <button
-                        className="tbl-btn edit"
+                        className="tbl-btn edit invoice-download-btn"
                         type="button"
                         onClick={(event) => { event.stopPropagation(); downloadInvoice(o); }}
                       >

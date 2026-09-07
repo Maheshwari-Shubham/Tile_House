@@ -60,11 +60,11 @@ export default function MyOrdersPage() {
                       <span className="ocu-status-badge" style={{background:st.bg,color:st.color}}>{st.label}</span>
                       {o.status === 'delivered' && (
                         <button
-                          className="tbl-btn edit"
+                          className="invoice-download-btn"
                           type="button"
                           onClick={(event) => { event.stopPropagation(); downloadInvoice(o); }}
                         >
-                          Download Invoice
+                          Download Receipt PDF
                         </button>
                       )}
                       <span className="ocu-chevron">{isOpen?'▲':'▼'}</span>
