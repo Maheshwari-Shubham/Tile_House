@@ -291,7 +291,7 @@ function DashboardTab({ products, orders, totalRevenue, pendingOrders }) {
       navigate('/admin/products');
       return;
     }
-    if (label === 'Total Orders' || label === 'Total Revenue') {
+    if (label === 'Total Orders') {
       navigate('/admin/orders');
       return;
     }
@@ -315,12 +315,18 @@ function DashboardTab({ products, orders, totalRevenue, pendingOrders }) {
       </div>
       <div className="stats-grid">
         {[
-          { label:'Total Products',  value:monthlyProducts,                          icon:'🗂️', color:'#E3F2FD' },
-          { label:'Total Orders',    value:monthlyOrders,                            icon:'📦', color:'#F3E5F5' },
-          { label:'Pending Orders',  value:monthlyPending,                           icon:'⏳', color:'#FFF3E0' },
+          { label:'Total Products',  value:monthlyProducts,                          icon:'🗂️', color:'#E3F2FD', route:'products' },
+          { label:'Total Orders',    value:monthlyOrders,                            icon:'📦', color:'#F3E5F5', route:'orders' },
+          { label:'Pending Orders',  value:monthlyPending,                           icon:'⏳', color:'#FFF3E0', route:'pending' },
           { label:'Total Revenue',   value:`₹${monthlyRevenue.toLocaleString('en-IN')}`,icon:'💰', color:'#E8F5E9' },
         ].map(s => (
-          <button type="button" className="stat-card stat-card-button" key={s.label} style={{background:s.color}} onClick={() => handleStatClick(s.label)}>
+          <button
+            type="button"
+            className="stat-card stat-card-button"
+            key={s.label}
+            style={{background:s.color}}
+            onClick={s.route ? () => handleStatClick(s.label) : undefined}
+          >
             <div className="stat-icon">{s.icon}</div>
             <div className="stat-val">{s.value}</div>
             <div className="stat-label">{s.label}</div>

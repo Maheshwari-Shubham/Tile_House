@@ -17,6 +17,7 @@ API.interceptors.request.use((config) => {
   const isUserRoute = url.startsWith('/users') || url.includes('/orders/mine');
   const isAdminRoute =
     url.startsWith('/admin') ||
+    url.startsWith('/upload') ||
     (url.startsWith('/orders') && !url.includes('/orders/mine')) ||
     (url.startsWith('/offers') && !url.includes('/offers/active')) ||
     (url.startsWith('/settings') && (url === '/settings/full' || url === '/settings/test-email' || ['post', 'put', 'delete'].includes(method))) ||
