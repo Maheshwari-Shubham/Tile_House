@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
   uploadProductImage,
@@ -18,6 +18,7 @@ const getSampleProducts = (products) => products.filter((product, index) =>
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [tab, setTab] = useState('Dashboard');
   const [products, setProducts] = useState([]);
   const [orders, setOrders]     = useState([]);
@@ -38,9 +39,27 @@ export default function AdminDashboard() {
   };
 
   const selectTab = (t) => {
+    const targetMap = {
+      Dashboard: '/admin',
+      Products: '/admin/products',
+      Orders: '/admin/orders',
+      Offers: '/admin/offers',
+      Settings: '/admin/settings',
+    };
+    const target = targetMap[t] || '/admin';
+    navigate(target);
     setTab(t);
     setMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    const path = location.pathname.replace(/\/$/, '') || '/admin';
+    if (path === '/admin' || path === '/admin/dashboard') setTab('Dashboard');
+    else if (path === '/admin/products') setTab('Products');
+    else if (path === '/admin/orders' || path === '/admin/orders/pending') setTab('Orders');
+    else if (path === '/admin/offers') setTab('Offers');
+    else if (path === '/admin/settings') setTab('Settings');
+  }, [location.pathname]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -133,6 +152,20 @@ function ImageUploader({ currentImage, onUpload }) {
     const file = e.target.files[0];
     if (!file) return;
 
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    const extension = (file.name || '').split('.').pop()?.toLowerCase();
+    if (!allowedTypes.includes(file.type) && !['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'].includes(extension)) {
+      setError('Please upload a JPG, PNG, WEBP, HEIC, or HEIF image.');
+      setPreview(currentImage || '');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image must be 10 MB or smaller.');
+      setPreview(currentImage || '');
+      return;
+    }
+
     // Show local preview immediately
     const localUrl = URL.createObjectURL(file);
     setPreview(localUrl);
@@ -161,7 +194,7 @@ function ImageUploader({ currentImage, onUpload }) {
       <input
         ref={fileRef}
         type="file"
-        accept="image/jpeg,image/jpg,image/png,image/webp"
+        accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
         style={{ display: 'none' }}
         onChange={handleFile}
       />
@@ -224,21 +257,74 @@ function ImageUploader({ currentImage, onUpload }) {
 
 /* ── DASHBOARD ── */
 function DashboardTab({ products, orders, totalRevenue, pendingOrders }) {
-  const recent = [...orders].slice(0, 5);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [selectedMonth, setSelectedMonth] = useState('all');
+
+  const monthOptions = [...new Set(orders.map(order => {
+    const d = new Date(order.createdAt);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 7);
+  }).filter(Boolean))].sort((a, b) => (a < b ? 1 : -1));
+
+  const filteredOrders = selectedMonth === 'all'
+    ? orders
+    : orders.filter(order => {
+        const date = new Date(order.createdAt);
+        return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 7) === selectedMonth;
+      });
+
+  const monthlyRevenue = filteredOrders.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
+  const monthlyPending = filteredOrders.filter(order => order.status === 'pending').length;
+  const monthlyOrders = filteredOrders.length;
+  const monthlyProducts = selectedMonth === 'all' ? products.length : products.length;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const filter = params.get('filter');
+    if (['all', 'pending', 'confirmed', 'out_for_delivery', 'delivered'].includes(filter)) {
+      setSelectedMonth('all');
+    }
+  }, [location.search]);
+
+  const handleStatClick = (label) => {
+    if (label === 'Total Products') {
+      navigate('/admin/products');
+      return;
+    }
+    if (label === 'Total Orders' || label === 'Total Revenue') {
+      navigate('/admin/orders');
+      return;
+    }
+    if (label === 'Pending Orders') {
+      navigate('/admin/orders/pending');
+    }
+  };
+
+  const recent = [...filteredOrders].slice(0, 5);
+
   return (
     <div className="tab-content">
+      <div className="dashboard-toolbar">
+        <div className="dashboard-toolbar-label">Monthly overview</div>
+        <select className="dashboard-month-filter" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+          <option value="all">All time</option>
+          {monthOptions.map(month => (
+            <option key={month} value={month}>{new Date(`${month}-01T00:00:00`).toLocaleString('en-IN', { month: 'long', year: 'numeric' })}</option>
+          ))}
+        </select>
+      </div>
       <div className="stats-grid">
         {[
-          { label:'Total Products',  value:products.length,                          icon:'🗂️', color:'#E3F2FD' },
-          { label:'Total Orders',    value:orders.length,                            icon:'📦', color:'#F3E5F5' },
-          { label:'Pending Orders',  value:pendingOrders,                            icon:'⏳', color:'#FFF3E0' },
-          { label:'Total Revenue',   value:`₹${totalRevenue.toLocaleString('en-IN')}`,icon:'💰', color:'#E8F5E9' },
+          { label:'Total Products',  value:monthlyProducts,                          icon:'🗂️', color:'#E3F2FD' },
+          { label:'Total Orders',    value:monthlyOrders,                            icon:'📦', color:'#F3E5F5' },
+          { label:'Pending Orders',  value:monthlyPending,                           icon:'⏳', color:'#FFF3E0' },
+          { label:'Total Revenue',   value:`₹${monthlyRevenue.toLocaleString('en-IN')}`,icon:'💰', color:'#E8F5E9' },
         ].map(s => (
-          <div className="stat-card" key={s.label} style={{background:s.color}}>
+          <button type="button" className="stat-card stat-card-button" key={s.label} style={{background:s.color}} onClick={() => handleStatClick(s.label)}>
             <div className="stat-icon">{s.icon}</div>
             <div className="stat-val">{s.value}</div>
             <div className="stat-label">{s.label}</div>
-          </div>
+          </button>
         ))}
       </div>
       <div className="recent-orders-section">
@@ -386,9 +472,24 @@ function ProductsTab({ products, onRefresh }) {
 
 /* ── ORDERS ── */
 function OrdersTab({ orders, onRefresh }) {
+  const location = useLocation();
   const [filter, setFilter]          = useState('all');
   const [expandedOrder, setExpanded] = useState(null);
   const [overrides, setOverrides]    = useState({}); // { orderId: { transport, labour, note, saving } }
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const nextFilter = params.get('filter');
+    const pathPending = location.pathname.endsWith('/pending');
+    if (pathPending) {
+      setFilter('pending');
+      return;
+    }
+
+    if (['all', 'pending', 'confirmed', 'out_for_delivery', 'delivered'].includes(nextFilter)) {
+      setFilter(nextFilter);
+    }
+  }, [location.search, location.pathname]);
 
   const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter);
 
@@ -660,7 +761,25 @@ function OffersTab({ offers, onRefresh }) {
 
   const openAdd  = () => { setForm(emptyForm); setEditOffer(null); setShowForm(true); };
   const openEdit = (o) => { setForm({...o, validUntil:o.validUntil?new Date(o.validUntil).toISOString().split('T')[0]:''}); setEditOffer(o._id); setShowForm(true); };
+  const today = new Date();
+  const todayString = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+  const validateOfferForm = () => {
+    if (!form.validUntil) {
+      alert('Please select a valid until date.');
+      return false;
+    }
+
+    const validUntil = new Date(form.validUntil);
+    const startOfToday = new Date(todayString);
+    if (Number.isNaN(validUntil.getTime()) || validUntil < startOfToday) {
+      alert('Offer valid date cannot be in the past. Please choose today or a future date.');
+      return false;
+    }
+
+    return true;
+  };
   const handleSave = async () => {
+    if (!validateOfferForm()) return;
     setSaving(true);
     try {
       if (editOffer) await updateOffer(editOffer, form);
@@ -770,7 +889,7 @@ function OffersTab({ offers, onRefresh }) {
                   ? <div className="fg"><label>Discount %</label><input type="number" value={form.discountPercent} onChange={e=>setForm(f=>({...f,discountPercent:e.target.value}))} /></div>
                   : <div className="fg"><label>Discount (₹)</label><input type="number" value={form.discountAmount} onChange={e=>setForm(f=>({...f,discountAmount:e.target.value}))} /></div>
                 }
-                <div className="fg"><label>Valid Until</label><input type="date" value={form.validUntil} onChange={e=>setForm(f=>({...f,validUntil:e.target.value}))} /></div>
+                <div className="fg"><label>Valid Until</label><input type="date" min={todayString} value={form.validUntil} onChange={e=>setForm(f=>({...f,validUntil:e.target.value}))} /></div>
                 <div className="fg checkbox-row"><label><input type="checkbox" checked={form.active} onChange={e=>setForm(f=>({...f,active:e.target.checked}))} /> Active / Live</label></div>
               </div>
             </div>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Offer = require('../models/Offer');
 const auth = require('../middleware/auth');
+const { isOfferDateValid } = require('../utils/offerValidation');
 
 // Get active PUBLIC offers only — hides isPrivate offers, strips privateCouponCode from response
 router.get('/active', async (req, res) => {
@@ -69,6 +70,11 @@ router.get('/', auth, async (req, res) => {
 // Admin: Create offer
 router.post('/', auth, async (req, res) => {
   try {
+    const { validUntil } = req.body || {};
+    if (!isOfferDateValid(validUntil)) {
+      return res.status(400).json({ error: 'Offer valid date cannot be in the past. Please choose today or a future date.' });
+    }
+
     const offer = new Offer(req.body);
     await offer.save();
     res.status(201).json(offer);
@@ -80,6 +86,11 @@ router.post('/', auth, async (req, res) => {
 // Admin: Update offer
 router.put('/:id', auth, async (req, res) => {
   try {
+    const { validUntil } = req.body || {};
+    if (!isOfferDateValid(validUntil)) {
+      return res.status(400).json({ error: 'Offer valid date cannot be in the past. Please choose today or a future date.' });
+    }
+
     const offer = await Offer.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(offer);
   } catch (err) {

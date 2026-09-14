@@ -11,15 +11,21 @@ const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = process.env.CLOUDINARY_UPLOAD_PRESET || 'tile_house_unsigned';
 
 const storage = multer.memoryStorage();
+const allowedMimeTypes = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
+const allowedExtensions = new Set(['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif']);
 const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // max 10 MB
   fileFilter: (req, file, cb) => {
-    if (['image/jpeg','image/jpg','image/png','image/webp'].includes(file.mimetype)) {
+    const mimeType = (file.mimetype || '').toLowerCase();
+    const extension = (file.originalname || '').split('.').pop()?.toLowerCase();
+
+    if (allowedMimeTypes.has(mimeType) || allowedExtensions.has(extension)) {
       cb(null, true);
-    } else {
-      cb(new Error('Only JPG, PNG and WEBP images are allowed'), false);
+      return;
     }
+
+    cb(new Error('Only JPG, PNG, WEBP, HEIC and HEIF images are allowed'), false);
   },
 });
 

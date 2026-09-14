@@ -40,7 +40,13 @@ function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/*" element={<AdminDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminDashboard />} />
+            <Route path="/admin/orders" element={<AdminDashboard />} />
+            <Route path="/admin/orders/pending" element={<AdminDashboard />} />
+            <Route path="/admin/offers" element={<AdminDashboard />} />
+            <Route path="/admin/settings" element={<AdminDashboard />} />
             <Route path="/*" element={
               <>
                 <Navbar />
