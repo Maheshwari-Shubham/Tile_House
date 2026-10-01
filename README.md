@@ -111,9 +111,11 @@ Quick summary:
 
 ## 🔐 Admin Panel
 
-**URL:** http://localhost:3000/admin/login  
-**Username:** `admin`  
-**Password:** `admin123`
+**URL:** http://localhost:3000/admin/login 
+
+The project includes a protected admin panel for managing products, offers, and customer orders.
+
+For security reasons, admin credentials are not published in this repository.
 
 > ⚠️ Change these credentials after first login by updating the Admin document in MongoDB.
 
