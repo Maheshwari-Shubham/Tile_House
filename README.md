@@ -117,8 +117,6 @@ The project includes a protected admin panel for managing products, offers, and 
 
 For security reasons, admin credentials are not published in this repository.
 
-> ⚠️ Change these credentials after first login by updating the Admin document in MongoDB.
-
 ### Admin Features:
 - **Dashboard** — Overview stats, recent orders
 - **Products** — Add / Edit / Delete tiles. Update prices anytime.
